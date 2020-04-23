@@ -1,9 +1,11 @@
 import argparse
 import os
 import requests
+import numpy as np
+import cv2 as cv
+import math
 
-def parse_mime_type(mime):
-    return mime.split('/')[-1]
+IMG_MAX_DIM = 225
 
 def create_output_dir(dir):
     if dir[-1] != '/':
@@ -14,12 +16,32 @@ def create_output_dir(dir):
 
     return dir
 
+def resize_image(img):
+    if max(img.shape) != IMG_MAX_DIM:
+        resize_percent = IMG_MAX_DIM / max(img.shape)
+        # For some reason this tuple needs to be (width, height), but img.shape is (height, width)
+        resized_size = (int(resize_percent * img.shape[1]), int(resize_percent * img.shape[0]))
+        img = cv.resize(img, resized_size, interpolation=cv.INTER_CUBIC)
+
+    top = bottom = left = right = 0
+    if img.shape[0] < IMG_MAX_DIM:
+        top = math.floor((IMG_MAX_DIM - img.shape[0]) / 2)
+        bottom = math.ceil((IMG_MAX_DIM - img.shape[0]) / 2)
+    if img.shape[1] < IMG_MAX_DIM:
+        left = math.floor((IMG_MAX_DIM - img.shape[1]) / 2)
+        right = math.floor((IMG_MAX_DIM - img.shape[1]) / 2)
+
+    return cv.copyMakeBorder(img, top, bottom, left, right, cv.BORDER_CONSTANT, value=(0, 0, 0))
+
+
 def download_image(url, directory_name, index):
     r = requests.get(url)
-    image = r.content
-    image_type = parse_mime_type(r.headers['Content-Type'])
-    with open(f'{directory_name}/{index}.{image_type}', 'wb') as f:
-        f.write(image)
+    img_array = np.asarray(bytearray(r.content))
+
+    img = cv.imdecode(img_array, cv.IMREAD_COLOR)
+    img = resize_image(img)
+    cv.imwrite(f'{directory_name}/{index}.png', img)
+    print("Written")
 
 def main():
     parser = argparse.ArgumentParser(description='Download imagse from a file containing a list of URLs')
