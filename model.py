@@ -38,7 +38,7 @@ def get_num_samples(data_dir, classes):
 
 def main():
     epochs = 10
-    classes = ['hot_dog', 'not_hot_dog']
+    classes = ['echeveria']
     samples = get_num_samples('data/', classes)
     batch_size = 32
 
@@ -46,7 +46,6 @@ def main():
     m = model()
     
     m.fit(flow, steps_per_epoch=math.ceil(samples / batch_size), epochs=epochs)
-
 
 if __name__ == '__main__':
     main()

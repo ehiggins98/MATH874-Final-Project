@@ -40,8 +40,12 @@ def download_image(url, directory_name, index):
 
     img = cv.imdecode(img_array, cv.IMREAD_COLOR)
     img = resize_image(img)
-    cv.imwrite(f'{directory_name}/{index}.png', img)
-    print("Written")
+
+    cv.imshow(f'Image {index}', img)
+    key = cv.waitKey(-1)
+    cv.destroyAllWindows()
+    if chr(key) == 'i' or chr(key) == 'I':
+        cv.imwrite(f'{directory_name}/{index}.png', img)
 
 def main():
     parser = argparse.ArgumentParser(description='Download imagse from a file containing a list of URLs')
