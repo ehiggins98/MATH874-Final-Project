@@ -47,6 +47,7 @@ def main():
     parser = argparse.ArgumentParser(description='Download imagse from a file containing a list of URLs')
     parser.add_argument('--input', '-i')
     parser.add_argument('--output', '-o')
+    parser.add_argument('--start', '-s', default=0, type=int)
     args = parser.parse_args()
 
     dir = create_output_dir(args.output)
@@ -54,7 +55,7 @@ def main():
     with open(args.input) as f:
         urls = list(filter(lambda x: len(x.strip()) > 0, f.read().split('\n')))
         for i, url in enumerate(urls):
-            download_image(url, dir, i)
+            download_image(url, dir, i + args.start)
 
 if __name__ == '__main__':
     main()
