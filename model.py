@@ -23,7 +23,7 @@ def model():
         tf.keras.layers.Conv2D(4, (3, 3), activation='relu'),
         tf.keras.layers.MaxPool2D(pool_size=(2,2)),
         tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(2, activation='softmax')
+        tf.keras.layers.Dense(4, activation='softmax')
     ])
     m.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     
@@ -38,7 +38,7 @@ def get_num_samples(data_dir, classes):
 
 def main():
     epochs = 10
-    classes = ['echeveria']
+    classes = ['croton', 'echeveria', 'peace_lily', 'ponytail_palm']
     samples = get_num_samples('data/', classes)
     batch_size = 32
 
