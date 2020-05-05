@@ -39,8 +39,11 @@ def download_image(url, directory_name, index):
     img_array = np.asarray(bytearray(r.content))
 
     img = cv.imdecode(img_array, cv.IMREAD_COLOR)
-    img = resize_image(img)
+    if img is None:
+        return
 
+    img = resize_image(img)
+    
     cv.imshow(f'Image {index}', img)
     key = cv.waitKey(-1)
     cv.destroyAllWindows()
