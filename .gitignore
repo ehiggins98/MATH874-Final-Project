@@ -3,3 +3,8 @@ hamburger.txt
 hot_dog.txt
 pizza.txt
 shoes.txt
+math-874-d436b7f22e9c.json
+*.hdf5
+__pycache__/
+graphs/
+__init__.pyc

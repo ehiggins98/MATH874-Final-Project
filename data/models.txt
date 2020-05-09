@@ -1,0 +1,7 @@
+* MobileNet v2
+	* Train
+		* Accuracy: 91.4%
+		* Loss: 0.26
+	* Val
+		* Accuracy: 57.5%
+		* Loss: 2.88
