@@ -5,7 +5,7 @@ from tensorflow.keras.regularizers import l2
 import math
 import argparse
 
-INPUT_WIDTH = INPUT_HEIGHT = 225
+INPUT_WIDTH = INPUT_HEIGHT = 224
 
 class DatasetGenerator:
     def __init__(self):
@@ -52,10 +52,11 @@ def mobilenet():
 
 def mobilenetv2():
     premade = tf.keras.applications.MobileNetV2(
-            input_shape=(224, 224, 3), include_top=False)
+            input_shape=(224, 224, 3), include_top=False, pooling='max')
     model = tf.keras.Sequential([
         premade,
         tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(units=500, activation='relu'),
         tf.keras.layers.Dense(units=30, activation='softmax')
     ])
 
@@ -65,6 +66,8 @@ def mobilenetv2():
 def model():
     m = tf.keras.models.Sequential([
         tf.keras.layers.InputLayer(input_shape=(INPUT_HEIGHT, INPUT_WIDTH, 3)),
+        tf.keras.layers.Conv2D(64, (5, 5), activation='relu', kernel_regularizer=l2()),
+        tf.keras.layers.MaxPool2D(pool_size=(2,2)),
         tf.keras.layers.Conv2D(64, (5, 5), activation='relu', kernel_regularizer=l2()),
         tf.keras.layers.MaxPool2D(pool_size=(2,2)),
         tf.keras.layers.Conv2D(32, (3, 3), activation='relu', kernel_regularizer=l2()),
@@ -90,18 +93,18 @@ def main(epochs, batch_size, data_dir):
     generator = DatasetGenerator()
 
     callback = tf.keras.callbacks.ModelCheckpoint(
-            'custom.hdf5',
+            'mobilenetv2.hdf5',
             monitor='val_accuracy',
             save_best_only=True)
 
-    m = model()
+    m = mobilenetv2()
     m.fit(
         generator.get_train_set(data_dir, batch_size),
         epochs=epochs,
         validation_data=generator.get_test_set(data_dir, batch_size),
         callbacks=[callback])
     
-    m.save('custom.hdf5')
+    m.save('mobilenetv2_end.hdf5')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
